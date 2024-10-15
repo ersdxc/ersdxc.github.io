@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Beds</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+max-width: 1000px;
+margin: 0 auto;
+padding: 20px;
+}
+
+.fixed-sidebar {
+position: fixed;
+left: 10px;
+top: 0;
+width: 15em;
+height: 100%;
+background-color: #f4f4f4;
+box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+overflow-y: auto;
+overflow-x: hidden;
+}
+
+.resize-handle {
+width: 5px;
+height: 100%;
+background-color: #ccc;
+cursor: ew-resize;
+position: absolute;
+top: 0;
+right: 0;
+}
+
+.main-content {
+padding: 10px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+}
+
+th, td {
+border: 1px solid grey;
+padding: 8px;
+text-align: left;
+}
+
+td {
+padding-bottom: 150px;
+border-bottom: 10px outset red;
+}
+
+th {
+background-color: darkgrey;
+cursor: pointer;
+}
+
+input[type="checkbox"] {
+margin-right: 5px;
+}
+
+button {
+margin: 5px;
+padding: 5px 10px;
+}
+
+.delete-button {
+background-color: red;
+color: white;
+border: none;
+padding: 1px 3px;
+margin-left: 5px;
+}
+
+
+.task-input {
+width: 100%;
+box-sizing: border-box;
+margin-bottom: 5px;
+}
+
+.selected-task {
+background-color: #e0e0e0;
+}
+
+.task-empty {
+color: black;
+}
+
+.task-amber {
+color: orange;
+text-decoration: underline;
+}
+
+.task-green {
+color: green;
+}
+
+.urgent-task {
+text-transform: uppercase;
+font-style: italic;
+font-weight: bold;
+}
+
+.urgent-task:before {
+content: '大：';
+}
+
+.notes-cell {
+width: 200px;
+}
+
+.notes-textarea {
+width: 100%;
+height: 300px;
+resize: both;
+}
+
+@media print {
+body * {
+visibility: hidden;
+}
+#taskTable, #taskTable * {
+visibility: visible;
+}
+#taskTable {
+position: absolute;
+left: 0;
+top: 0;
+}
+.notes-textarea {
+resize: none;
+overflow: hidden;
+}
+
+.notes-cell, .notes-textarea {
+display: none;
+}
+
+button {
+display: none;
+}
+
+input[type="checkbox"] {
+margin-bottom: 1em;
+}
+}
+
+#autocompleteBox .selected {
+background-color: #e0e0e0;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="fixed-sidebar">
+<div class="resize-handle"></div>
+<div id="subjectForm">
+<input type="text" id="subjectInput" placeholder="Enter bed">
+<button onclick="addSubject()">Add</button>
+</div>
+
+<hr>
+
+<p>A:</p>
+<input type="file" id="importAbbreviations" accept=".csv" onchange="importAbbreviations(event)">
+
+<hr>
+
+<p>P:</p>
+<input type="file" id="importProforma" accept=".txt" onchange="importProforma(event)">
+
+<hr>
+
+<p>J:</p>
+
+<div id="shortcutButtons"></div>
+
+<div id="shortcutManagement">
+<input type="text" id="newShortcutInput" placeholder="New">
+<button onclick="addShortcut()">Add</button>
+<button onclick="exportShortcuts()">Export</button>
+<p>
+<label for="importShortcuts">Add:</label>
+<input type="file" id="importShortcuts" accept=".json" onchange="importShortcuts(event)">
+</p>
+</div>
+
+<hr>
+
+<button onclick="exportCSV()">💾 SAVE (please follow GDPR)</button>
+<p>
+<label for="importCSV">Import:</label>
+<input type="file" id="importCSV" accept=".csv" onchange="importCSV(event)">
+</p>
+<button onclick="printPDF()">🖨 PRINT (please follow GDPR)</button>
+</div>
+
+<div class="main-content">
+<hr>
+<p><button onclick="defaultTextareaSizes()" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">حجم صغير</button></p>
+<button onclick="bigTextareaSizes()" style="position: fixed; top: 60px; right: 10px; z-index: 1000;">大きい</button>
+
+<button id="viewAllButton">See all</button>
+<select id="filterDropdown" multiple>
+  <option value="green">緑</option>
+  <option value="amber">黄色</option>
+  <option value="empty">未完成</option>
+  <option value="urgent">大</option>
+</select>
+
+<div id="taskList" style="padding: 10px; border: 1.2px dashed brown; margin-top: 20px;"></div>
+
+<table id="taskTable">
+<thead>
+<tr>
+<th onclick="sortSubjects('name')">Bed</th>
+<th onclick="sortSubjects()">Tasks</th>
+<th class="notes-cell">Notes</th>
+</tr>
+</thead>
+<tbody id="taskTableBody"></tbody>
+</table>
+</div>
+
+<script src="./assets/sc.js"></script>
+</body>
+</html>
